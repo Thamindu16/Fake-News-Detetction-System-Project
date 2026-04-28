@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthLens | Advanced Misinformation Detection</title>
+    <meta name="description" content="AI-Powered Misinformation Detection System. Analyze news articles and headlines for authenticity.">
+
+    <link rel="stylesheet" href="/static/styles.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="grid-overlay"></div>
+        <div class="sine-wave-container">
+            <svg class="sine-waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28">
+                <defs>
+                    <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                </defs>
+                <g class="wave-parallax">
+                    <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 240, 255, 0.04)" />
+                    <use href="#gentle-wave" x="48" y="3" fill="rgba(87, 115, 255, 0.04)" />
+                    <use href="#gentle-wave" x="48" y="5" fill="rgba(255, 255, 255, 0.02)" />
+                    <use href="#gentle-wave" x="48" y="7" fill="rgba(0, 240, 255, 0.06)" />
+                </g>
+            </svg>
+        </div>
+        <div class="ambient-light light-1"></div>
+        <div class="ambient-light light-2"></div>
+        <div class="ambient-light light-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>TruthLens</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">Scanner</a>
+                <a href="#">Methodology</a>
+                <a href="#">API</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="hero">
+            <div class="badge-pro"><span>PRO</span> Advanced AI Engine</div>
+            <h1>Know <span class="text-gradient">What’s Real</span></h1>
+            <p>Quickly check the authenticity of any news article and stay protected from misleading information.</p>
+        </header>
+
+        <div class="scanner-container">
+            <div class="scanner-tabs">
+                <button class="tab active" data-tab="text"><i class="fa-solid fa-file-lines"></i> Text Snippet</button>
+                <button class="tab" data-tab="url"><i class="fa-solid fa-link"></i> URL Scanner</button>
+            </div>
+
+            <section class="input-section">
+                <div class="input-wrapper" id="input-container">
+                    <textarea id="news-input" placeholder="Paste the news article, headline, or excerpt here to analyze..."></textarea>
+                    <div class="input-footer">
+                        <div class="character-count"><span id="char-count">0</span> / 5000</div>
+                        <button class="clear-btn" id="clear-btn"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                    </div>
+                </div>
+                
+                <button id="analyze-btn" class="glow-btn main-action">
+                    <span class="btn-content"><i class="fa-solid fa-magnifying-glass-chart"></i> Run Analysis</span>
+                    <div class="scanner-line"></div>
+                </button>
+            </section>
+        </div>
+
+        <section id="result-section" class="result-section hidden">
+            <div class="result-grid">
+                
+                <div class="result-card primary-result">
+                    <div class="result-header">
+                        <h2>Analysis Verdict</h2>
+                        <div id="verdict-badge" class="verdict-badge"></div>
+                    </div>
+                    
+                    <div class="verdict-summary" id="verdict-summary">
+                        <h3>AI Summary</h3>
+                        <p id="summary-text"></p>
+                    </div>
+
+                    <div class="gauge-container">
+                        <svg class="gauge-svg" viewBox="0 0 200 110">
+                            <defs>
+                                <linearGradient id="gaugeGradientFake" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#FF3B30" />
+                                    <stop offset="100%" stop-color="#FF9500" />
+                                </linearGradient>
+                                <linearGradient id="gaugeGradientReal" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#34C759" />
+                                    <stop offset="100%" stop-color="#30D158" />
+                                </linearGradient>
+                            </defs>
+                            <path class="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100" />
+                            <path class="gauge-fill" id="gauge-fill" d="M 20 100 A 80 80 0 0 1 180 100" />
+                        </svg>
+                        <div class="gauge-content">
+                            <span class="score-label">Confidence</span>
+                            <div class="score-value"><span id="confidence-score">0</span>%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-card details-card">
+                    <h3><i class="fa-solid fa-list-check"></i> Key Indicators</h3>
+                    <ul id="indicator-list" class="indicator-list"></ul>
+                </div>
+                
+                <div class="result-card meta-card">
+                    <h3><i class="fa-solid fa-chart-pie"></i> Linguistic Breakdown</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Sensationalism</span>
+                        <div class="stat-bar-bg"><div class="stat-bar" id="sensationalism-bar"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Objectivity</span>
+                        <div class="stat-bar-bg"><div class="stat-bar" id="objectivity-bar"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Emotional Tone</span>
+                        <div class="stat-bar-bg"><div class="stat-bar" id="emotion-bar"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
