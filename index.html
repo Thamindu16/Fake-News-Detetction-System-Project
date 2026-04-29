@@ -6,12 +6,13 @@
     <title>TruthLens | Advanced Misinformation Detection</title>
     <meta name="description" content="AI-Powered Misinformation Detection System. Analyze news articles and headlines for authenticity.">
 
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="static/styles.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
     <div class="background-effects">
         <div class="grid-overlay"></div>
         <div class="sine-wave-container">
@@ -91,16 +92,6 @@
 
                     <div class="gauge-container">
                         <svg class="gauge-svg" viewBox="0 0 200 110">
-                            <defs>
-                                <linearGradient id="gaugeGradientFake" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#FF3B30" />
-                                    <stop offset="100%" stop-color="#FF9500" />
-                                </linearGradient>
-                                <linearGradient id="gaugeGradientReal" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#34C759" />
-                                    <stop offset="100%" stop-color="#30D158" />
-                                </linearGradient>
-                            </defs>
                             <path class="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100" />
                             <path class="gauge-fill" id="gauge-fill" d="M 20 100 A 80 80 0 0 1 180 100" />
                         </svg>
@@ -136,6 +127,7 @@
         </section>
     </main>
 
-    <script src="/static/script.js"></script>
+    <script src="static/script.js"></script>
+
 </body>
 </html>
