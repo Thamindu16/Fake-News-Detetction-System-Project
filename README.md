@@ -5,7 +5,7 @@ TruthLens is an AI-powered web application that analyzes news articles and headl
 
 # LIVE DEMO
 Frontend (GitHub Pages):  
-https://thamindu16.github.io/Fake-News-Detection-System-Project/  
+https://thamindu16.github.io/Fake-News-Detetction-System-Project/ 
 
 Backend API (Render):  
 https://fake-news-api-5lv4.onrender.com  
