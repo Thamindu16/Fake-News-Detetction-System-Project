@@ -56,15 +56,7 @@ Response:
   "prediction": "fake",
   "confidence": 0.87
 }
-
-# LOCAL SETUP 
-git clone https://github.com/Thamindu16/Fake-News-Detection-System-Project.git  
-cd Fake-News-Detection-System-Project  
-pip install -r requirements.txt  
-uvicorn app:app --reload  
-
-Then open index.html in browser  
-
+ 
 # DEPLOYMENT
 Frontend hosted on GitHub Pages  
 Backend hosted on Render with CORS enabled  
