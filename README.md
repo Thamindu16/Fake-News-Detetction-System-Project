@@ -75,19 +75,12 @@ Fixed static file serving in FastAPI
 Resolved API endpoint mismatches  
 Debugged deployment issues on Render and GitHub Pages  
 
-# FUTURE IMPROVEMENTS 
-Add URL-based news analysis  
-Use advanced NLP models (BERT, Transformers)  
-Add authentication system  
-Improve UI/UX and mobile responsiveness  
-Add database integration  
-
 # AUTHOR
 Thamindu Kavinda  
 https://github.com/Thamindu16  
 
 # SUPPORT 
-If you like this project, consider starring ⭐ the repository and sharing it  
+If you like this project, consider starring the repository and sharing it  
 
 # LICENSE 
 This project is created for educational purposes
