@@ -7,25 +7,31 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-# create app FIRST
+# create app
 app = FastAPI()
 
-# allow frontend connect
+# CORS (frontend connect)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# base path fix (important for deployment)
+# base path
 BASE_DIR = os.path.dirname(__file__)
 
+# load model
 model = pickle.load(open(os.path.join(BASE_DIR, "model.pkl"), "rb"))
 vectorizer = pickle.load(open(os.path.join(BASE_DIR, "vectorizer.pkl"), "rb"))
 
-# serve static files (css, js)
-app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
+# static folder ONLY
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
+    name="static"
+)
 
 # serve frontend
 @app.get("/")
@@ -44,6 +50,6 @@ def predict(news: News):
     confidence = model.predict_proba(data).max()
 
     return {
-        "prediction": prediction,
+        "prediction": str(prediction),   # ensure string
         "confidence": float(confidence)
     }
