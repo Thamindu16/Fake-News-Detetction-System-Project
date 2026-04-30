@@ -6,7 +6,8 @@
     <title>TruthLens | Advanced Misinformation Detection</title>
     <meta name="description" content="AI-Powered Misinformation Detection System. Analyze news articles and headlines for authenticity.">
 
-    <link rel="stylesheet" href="static/styles.css">
+    <!-- FIX 1: relative path -->
+    <link rel="stylesheet" href="./static/styles.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,10 +16,11 @@
 
     <div class="background-effects">
         <div class="grid-overlay"></div>
+
         <div class="sine-wave-container">
             <svg class="sine-waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28">
                 <defs>
-                    <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                    <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
                 </defs>
                 <g class="wave-parallax">
                     <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 240, 255, 0.04)" />
@@ -28,6 +30,7 @@
                 </g>
             </svg>
         </div>
+
         <div class="ambient-light light-1"></div>
         <div class="ambient-light light-2"></div>
         <div class="ambient-light light-3"></div>
@@ -56,21 +59,33 @@
 
         <div class="scanner-container">
             <div class="scanner-tabs">
-                <button class="tab active" data-tab="text"><i class="fa-solid fa-file-lines"></i> Text Snippet</button>
-                <button class="tab" data-tab="url"><i class="fa-solid fa-link"></i> URL Scanner</button>
+                <button class="tab active" data-tab="text">
+                    <i class="fa-solid fa-file-lines"></i> Text Snippet
+                </button>
+                <button class="tab" data-tab="url">
+                    <i class="fa-solid fa-link"></i> URL Scanner
+                </button>
             </div>
 
             <section class="input-section">
                 <div class="input-wrapper" id="input-container">
                     <textarea id="news-input" placeholder="Paste the news article, headline, or excerpt here to analyze..."></textarea>
+
                     <div class="input-footer">
-                        <div class="character-count"><span id="char-count">0</span> / 5000</div>
-                        <button class="clear-btn" id="clear-btn"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                        <div class="character-count">
+                            <span id="char-count">0</span> / 5000
+                        </div>
+
+                        <button class="clear-btn" id="clear-btn">
+                            <i class="fa-solid fa-trash-can"></i> Clear
+                        </button>
                     </div>
                 </div>
                 
                 <button id="analyze-btn" class="glow-btn main-action">
-                    <span class="btn-content"><i class="fa-solid fa-magnifying-glass-chart"></i> Run Analysis</span>
+                    <span class="btn-content">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Run Analysis
+                    </span>
                     <div class="scanner-line"></div>
                 </button>
             </section>
@@ -78,14 +93,14 @@
 
         <section id="result-section" class="result-section hidden">
             <div class="result-grid">
-                
+
                 <div class="result-card primary-result">
                     <div class="result-header">
                         <h2>Analysis Verdict</h2>
                         <div id="verdict-badge" class="verdict-badge"></div>
                     </div>
                     
-                    <div class="verdict-summary" id="verdict-summary">
+                    <div class="verdict-summary">
                         <h3>AI Summary</h3>
                         <p id="summary-text"></p>
                     </div>
@@ -95,9 +110,12 @@
                             <path class="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100" />
                             <path class="gauge-fill" id="gauge-fill" d="M 20 100 A 80 80 0 0 1 180 100" />
                         </svg>
+
                         <div class="gauge-content">
                             <span class="score-label">Confidence</span>
-                            <div class="score-value"><span id="confidence-score">0</span>%</div>
+                            <div class="score-value">
+                                <span id="confidence-score">0</span>%
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,25 +127,36 @@
                 
                 <div class="result-card meta-card">
                     <h3><i class="fa-solid fa-chart-pie"></i> Linguistic Breakdown</h3>
+
                     <div class="stat-row">
                         <span class="stat-label">Sensationalism</span>
-                        <div class="stat-bar-bg"><div class="stat-bar" id="sensationalism-bar"></div></div>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar" id="sensationalism-bar"></div>
+                        </div>
                     </div>
+
                     <div class="stat-row">
                         <span class="stat-label">Objectivity</span>
-                        <div class="stat-bar-bg"><div class="stat-bar" id="objectivity-bar"></div></div>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar" id="objectivity-bar"></div>
+                        </div>
                     </div>
+
                     <div class="stat-row">
                         <span class="stat-label">Emotional Tone</span>
-                        <div class="stat-bar-bg"><div class="stat-bar" id="emotion-bar"></div></div>
+                        <div class="stat-bar-bg">
+                            <div class="stat-bar" id="emotion-bar"></div>
+                        </div>
                     </div>
+
                 </div>
 
             </div>
         </section>
     </main>
 
-    <script src="static/script.js"></script>
+    <!-- FIX 2: relative path -->
+    <script src="./static/script.js"></script>
 
 </body>
 </html>
