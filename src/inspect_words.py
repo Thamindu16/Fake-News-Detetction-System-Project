@@ -7,7 +7,7 @@ import pandas as pd
 # Make sure special characters (curly quotes, etc.) print correctly on Windows
 sys.stdout.reconfigure(encoding="utf-8")
 
-DATA = Path("data/processed_v2")
+DATA = Path("data/processed_v3")
 # Words to inspect: taken from the command line, or this default list
 WORDS = sys.argv[1:] or ["https", "com", "wire", "pic", "milo", "27"]
 
