@@ -63,6 +63,8 @@ def keywords(sentence, limit):
 
 def lookup(sentence, limits=(3, 2), per_query=5):
     """Search with a few keywords; if nothing is found, retry with fewer."""
+    if len(keywords(sentence, 3)) < 2:
+        return None, []   # one lonely word (for example a bare number) is not a claim
     tried, last_query = set(), None
     for limit in limits:
         words = keywords(sentence, limit)
@@ -86,7 +88,8 @@ def match_claims(text, max_sentences=3):
         except FactCheckError:
             failed += 1          # the service had a problem: note it and carry on
             continue
-        searches.append(query)
+        if query:
+            searches.append(query)
         for match in matches:
             key = (match["url"], match["claim"])
             if key in seen:
