@@ -11,6 +11,16 @@ sys.stdout.reconfigure(encoding="utf-8")
 # Small model that turns text into numbers capturing its meaning. Runs fine on CPU.
 _model = SentenceTransformer("all-MiniLM-L6-v2")
 
+# Words that appear in many news sentences but say nothing about the topic
+GENERIC_WORDS = {
+    "said", "says", "say", "according", "announced", "official", "officials",
+    "reported", "reports", "report", "experts", "expert", "called", "told",
+    "added", "today", "yesterday", "last", "month", "week", "year", "years",
+    "people", "new", "news", "shared", "times", "post", "posts", "claim",
+    "claims", "claimed", "viral",
+}
+IGNORED_WORDS = set(ENGLISH_STOP_WORDS) | GENERIC_WORDS
+
 
 def split_sentences(text):
     """Split text into sentences and drop very short fragments."""
@@ -19,38 +29,36 @@ def split_sentences(text):
 
 
 def pick_sentences(text, max_sentences=3):
-    """Choose which sentences to look up. Short input is used as it is."""
+    """Choose which sentences to look up: the first few. Short input is used as it is."""
     text = text.strip()
     if len(text.split()) <= 25:
         return [text]
     sentences = split_sentences(text)
-    if not sentences:
-        return [text[:300]]
-    picked = sentences[:1]                                          # the opening sentence
-    picked += [s for s in sentences[1:] if re.search(r"\d", s)]     # sentences containing numbers
-    return picked[:max_sentences]
+    return sentences[:max_sentences] or [text[:300]]
 
 
 def keywords(sentence, limit):
-    """Pick the most informative words: numbers and capitalised words first, then longer words."""
+    """Pick the most informative words: numbers first, then names, then words in their original order."""
+    sentence = re.sub(r"(?<=\d),(?=\d)", "", sentence)  # "10,000" becomes "10000"
     words = re.findall(r"[A-Za-z0-9][A-Za-z0-9'-]*", sentence)
-    scored, seen = [], set()
+    candidates, seen = [], set()
     for position, word in enumerate(words):
         lower = word.lower()
         has_digit = any(c.isdigit() for c in word)
-        if lower in ENGLISH_STOP_WORDS or lower in seen:
+        if lower in IGNORED_WORDS or lower in seen:
             continue
         if len(word) < 3 and not has_digit:
             continue
         seen.add(lower)
-        score = len(word) / 10
+        score = 0
         if has_digit:
-            score += 2        # for example "5G" or "300"
+            score = 2        # for example "5G" or "300"
         elif word[0].isupper() and position > 0:
-            score += 1.5      # probably a name
-        scored.append((score, position, word))
-    best = sorted(scored, reverse=True)[:limit]
-    return [word for _, _, word in sorted(best, key=lambda item: item[1])]  # keep original order
+            score = 1.5      # probably a name, for example "Gates"
+        candidates.append((score, position, word))
+    # Highest score first; when scores tie, the word that comes first in the sentence wins
+    best = sorted(candidates, key=lambda item: (-item[0], item[1]))[:limit]
+    return [word for _, _, word in sorted(best, key=lambda item: item[1])]
 
 
 def lookup(sentence, limits=(3, 2), per_query=5):
