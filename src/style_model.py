@@ -8,7 +8,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-MODEL_DIR = Path("models/distilroberta_v3_normalized")
+MODEL_DIR = Path(__file__).resolve().parent.parent / "models" / "distilroberta_v3_normalized"
 MAX_TOKENS = 256   # the model only reads the first 256 tokens of any text
 
 # Decisions taken from the validation experiments in the notebook:
