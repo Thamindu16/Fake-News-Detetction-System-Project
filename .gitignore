@@ -4,3 +4,4 @@ data/
 models/
 .ipynb_checkpoints/
 .env
+samples/
