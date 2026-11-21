@@ -1,5 +1,6 @@
 import os
 import sys
+import threading
 import time
 
 import requests
@@ -14,9 +15,31 @@ URL = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
 # Temporary problems worth retrying. Other errors (bad key, bad request) will not fix themselves.
 RETRY_CODES = {429, 500, 502, 503, 504}
 
+# Remember answers for a day, so the same question does not use the API quota twice
+CACHE_SECONDS = 24 * 3600
+CACHE_MAX = 500
+_cache = {}
+_cache_lock = threading.Lock()
+
 
 class FactCheckError(Exception):
     """Raised when the lookup fails. The message never contains the API key."""
+
+
+def _cache_get(key):
+    with _cache_lock:
+        item = _cache.get(key)
+        if item and time.time() - item[0] < CACHE_SECONDS:
+            return [dict(r) for r in item[1]]   # copies, so callers cannot change what is stored
+        _cache.pop(key, None)                   # expired or missing
+        return None
+
+
+def _cache_put(key, results):
+    with _cache_lock:
+        if len(_cache) >= CACHE_MAX:
+            del _cache[min(_cache, key=lambda k: _cache[k][0])]   # drop the oldest entry
+        _cache[key] = (time.time(), [dict(r) for r in results])
 
 
 def parse_results(data):
@@ -37,6 +60,11 @@ def parse_results(data):
 
 def search_fact_checks(query, language="en", max_results=5, retries=3):
     """Return fact-checks related to a claim. Raises FactCheckError if the lookup fails."""
+    key = (query.strip().lower(), language, max_results)
+    cached = _cache_get(key)
+    if cached is not None:      # an empty list is a valid cached answer too
+        return cached
+
     if not API_KEY:
         raise FactCheckError("FACTCHECK_API_KEY is not set. Put it in the .env file.")
 
@@ -56,7 +84,9 @@ def search_fact_checks(query, language="en", max_results=5, retries=3):
             problem = type(error).__name__
         else:
             if response.status_code == 200:
-                return parse_results(response.json())
+                results = parse_results(response.json())
+                _cache_put(key, results)    # only successful lookups are remembered
+                return results
             problem = f"HTTP {response.status_code}"
             if response.status_code not in RETRY_CODES:
                 break  # retrying will not help

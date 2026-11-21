@@ -255,6 +255,8 @@ async function analyze(){
     const res = await fetch(API_URL + "/analyze", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({text})});
     if (!res.ok) throw new Error(res.status === 422
       ? "The text could not be accepted. Check that it isn’t empty or longer than 20,000 characters."
+      : res.status === 429
+      ? "Too many requests. Please wait a minute and try again."
       : `The server returned an error (${res.status}). Try again in a moment.`);
     render(await res.json());
   }catch(e){

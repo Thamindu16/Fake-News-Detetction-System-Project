@@ -1,6 +1,9 @@
+import time
+from collections import defaultdict, deque
 from contextlib import asynccontextmanager
+from threading import Lock
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
@@ -10,6 +13,9 @@ from style_model import _load as load_style_model, analyze_style
 MAX_CHARS = 20_000      # refuse very long inputs
 CLOSE_MATCH = 0.80      # "this claim has been fact-checked"
 RELATED_MATCH = 0.50    # "fact-checks about a similar topic"; weaker matches are dropped
+
+RATE_LIMIT = 10         # requests allowed per client ...
+RATE_WINDOW = 60        # ... in this many seconds
 
 # Websites allowed to call this API from a browser. Add the real frontend address later.
 ALLOWED_ORIGINS = [
@@ -24,6 +30,25 @@ STYLE_MESSAGES = {
     "uncertain": "The model is not sure which kind of website this writing style resembles.",
     "too_short": "This text is too short for a style analysis (at least 40 words are needed).",
 }
+
+_hits = defaultdict(deque)   # client address -> times of its recent requests
+_hits_lock = Lock()
+
+
+def is_rate_limited(client):
+    """Allow RATE_LIMIT requests per client in any RATE_WINDOW seconds."""
+    now = time.time()
+    with _hits_lock:
+        if len(_hits) > 5000:   # forget quiet clients, so memory cannot grow forever
+            for key in [k for k, q in _hits.items() if not q or now - q[-1] > RATE_WINDOW]:
+                del _hits[key]
+        hits = _hits[client]
+        while hits and now - hits[0] > RATE_WINDOW:
+            hits.popleft()
+        if len(hits) >= RATE_LIMIT:
+            return True
+        hits.append(now)
+        return False
 
 
 @asynccontextmanager
@@ -127,8 +152,18 @@ def health():
 
 
 @app.post("/analyze")
-def analyze(request: AnalyzeRequest):
-    text = request.text.strip()
+def analyze(body: AnalyzeRequest, http: Request):
+    # When deployed behind a proxy, the real visitor address arrives in the X-Forwarded-For header.
+    # That is handled at deploy time; for now the direct connection address is used.
+    client = http.client.host if http.client else "unknown"
+    if is_rate_limited(client):
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests. Please wait a minute and try again.",
+            headers={"Retry-After": str(RATE_WINDOW)},
+        )
+
+    text = body.text.strip()
     try:
         style = analyze_style(text)
     except FileNotFoundError:
