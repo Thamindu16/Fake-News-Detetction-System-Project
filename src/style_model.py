@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -8,7 +9,9 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-MODEL_DIR = Path(__file__).resolve().parent.parent / "models" / "distilroberta_v3_normalized"
+LOCAL_MODEL_DIR = Path(__file__).resolve().parent.parent / "models" / "distilroberta_v3_normalized"
+# On the server the model is downloaded from the Hugging Face Hub: set STYLE_MODEL to its repo name
+MODEL_SOURCE = os.environ.get("STYLE_MODEL") or str(LOCAL_MODEL_DIR)
 MAX_TOKENS = 256   # the model only reads the first 256 tokens of any text
 
 # Decisions taken from the validation experiments in the notebook:
@@ -37,10 +40,10 @@ def _load():
     """Load the model once, the first time it is needed."""
     global _tokenizer, _model
     if _model is None:
-        if not MODEL_DIR.exists():
-            raise FileNotFoundError(f"Model folder not found: {MODEL_DIR}")
-        _tokenizer = AutoTokenizer.from_pretrained(str(MODEL_DIR))
-        _model = AutoModelForSequenceClassification.from_pretrained(str(MODEL_DIR)).to(_device).eval()
+        if not os.environ.get("STYLE_MODEL") and not LOCAL_MODEL_DIR.exists():
+            raise FileNotFoundError(f"Model folder not found: {LOCAL_MODEL_DIR}")
+        _tokenizer = AutoTokenizer.from_pretrained(MODEL_SOURCE)
+        _model = AutoModelForSequenceClassification.from_pretrained(MODEL_SOURCE).to(_device).eval()
     return _tokenizer, _model
 
 
