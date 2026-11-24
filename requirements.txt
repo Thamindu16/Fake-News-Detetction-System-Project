@@ -1,6 +1,8 @@
+datasets
+pandas
+scikit-learn
+requests
+python-dotenv
+sentence-transformers
 fastapi
 uvicorn
-scikit-learn
-pandas
-numpy
-nltk
